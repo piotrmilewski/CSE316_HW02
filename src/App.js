@@ -29,6 +29,30 @@ class App extends Component {
     console.log("currentScreen: " + this.state.currentScreen);
   }
 
+  nameChange = (key, e) => {
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        todo.name = e.target.value;
+      }
+      return todo;
+    }) });
+  }
+
+  ownerChange = (key, e) => {
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        todo.owner = e.target.value;
+      }
+      return todo;
+    }) });
+  }
+
+  moveItemDown = (ItemKey, key, e) => {
+    console.log(ItemKey);
+    console.log(key);
+    console.log(e);
+  }
+
   render() {
     switch(this.state.currentScreen) {
       case AppScreen.HOME_SCREEN:
@@ -37,6 +61,9 @@ class App extends Component {
         todoLists={this.state.todoLists} />;
       case AppScreen.LIST_SCREEN:            
         return <ListScreen
+          moveItemDown={this.moveItemDown}
+          ownerChange={this.ownerChange}
+          nameChange={this.nameChange}
           goHome={this.goHome.bind(this)}
           todoList={this.state.currentList} />;
       case AppScreen.ITEM_SCREEN:

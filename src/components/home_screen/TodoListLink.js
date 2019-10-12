@@ -6,6 +6,7 @@ export class TodoListLink extends Component {
         return (
             <a 
                 className='home_list_link'
+                href='#'
                 onClick={this.props.loadList.bind(this, this.props.todoList)}
             >
                 {this.props.todoList.name}<br />
