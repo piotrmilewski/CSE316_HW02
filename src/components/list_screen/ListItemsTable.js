@@ -3,6 +3,7 @@ import ListItemCard from './ListItemCard'
 
 export class ListItemsTable extends Component {
     render() {
+        var index = 0;
         return (
             <div id="list_items_container">
                 <div className="list_item_header_card">
@@ -12,7 +13,10 @@ export class ListItemsTable extends Component {
                 </div>
                 {
                     this.props.todoList.items.map((todoItem)=>(
-                        <ListItemCard 
+                        <ListItemCard
+                            index={index++}
+                            removeItem={this.props.removeItem}
+                            moveItemUp={this.props.moveItemUp} 
                             moveItemDown={this.props.moveItemDown}
                             todoList={this.props.todoList}
                             listItem={todoItem} />

@@ -140,9 +140,17 @@ body {
   font-size: 24pt;
   font-weight: bold;
 }
+.list_item_card_button_disabled {
+  background-color: lightgray;
+  color: var(--swatch-neutral);
+  font-size: 24pt;
+}
+.list_item_card_button_disabled:hover {
+  cursor: default;
+}
 .list_item_card_button:hover {
   color: var(--swatch-complement);
-  cursor: default;
+  cursor: pointer;
 }
 .disabled {
   background-color: lightgray;

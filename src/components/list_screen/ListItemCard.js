@@ -7,7 +7,23 @@ export class ListItemCard extends Component {
             color: this.props.listItem.completed ? 'green' : 'red'
         }
     }
-    
+
+    getDownButtonClass = () => {
+        return (this.props.todoList.items.length-1) !== this.props.index ? 'list_item_card_button': 'list_item_card_button_disabled' 
+    }
+
+    getDownDisabled = () => {
+        return (this.props.todoList.items.length-1) !== this.props.index ? false : true
+    }
+
+    getUpButtonClass = () => {
+        return this.props.index !== 0 ? 'list_item_card_button': 'list_item_card_button_disabled' 
+    }
+
+    getUpDisabled = () => {
+        return this.props.index !== 0 ? false : true
+    }
+
     render() {
         return (
             <div className='list_item_card'>
@@ -24,9 +40,14 @@ export class ListItemCard extends Component {
                     {this.props.listItem.completed ? 'Completed' : 'Pending'}
                 </div>
                 <div className='list_item_card_toolbar'>
-                    <button className='list_item_card_button'>&#x21e7;</button>
-                    <button className='list_item_card_button' onClick={this.props.moveItemDown.bind(this, this.props.listItem.key, this.props.todoList.key)}>&#x21e9;</button>
-                    <button className='list_item_card_button'>&#10005;</button>
+                    <button className={this.getUpButtonClass()}
+                            disabled={this.getUpDisabled()}                            
+                            onClick={this.props.moveItemUp.bind(this, this.props.listItem.key, this.props.todoList.key)}>&#x21e7;</button>
+                    <button className={this.getDownButtonClass()}
+                            disabled={this.getDownDisabled()}
+                            onClick={this.props.moveItemDown.bind(this, this.props.listItem.key, this.props.todoList.key)}>&#x21e9;</button>
+                    <button className='list_item_card_button'
+                            onClick={this.props.removeItem.bind(this, this.props.listItem.key, this.props.todoList.key)}>&#10005;</button>
                 </div>
             </div>
         )

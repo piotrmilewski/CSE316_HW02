@@ -114,6 +114,11 @@ body {
   border-radius: 5px;
   margin: 1%;
 }
+.list_item_card_button_disabled {
+  text-align: center;
+  border-radius: 5px;
+  margin: 1%;
+}
 .list_item_add_card {
   text-align: center;
   vertical-align: center;

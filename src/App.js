@@ -48,9 +48,46 @@ class App extends Component {
   }
 
   moveItemDown = (ItemKey, key, e) => {
-    console.log(ItemKey);
-    console.log(key);
-    console.log(e);
+    var index = 0;
+    while (this.state.todoLists[key].items[index].key !== ItemKey){
+      index++;
+    }
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        this.state.todoLists[key].items.splice(
+          index+1, 0, this.state.todoLists[key].items.splice(index, 1)[0]
+        );
+      }
+      return todo;
+    }) });
+  }
+
+  moveItemUp = (ItemKey, key, e) => {
+    var index = 0;
+    while (this.state.todoLists[key].items[index].key !== ItemKey){
+      index++;
+    }
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        this.state.todoLists[key].items.splice(
+          index-1, 0, this.state.todoLists[key].items.splice(index, 1)[0]
+        );
+      }
+      return todo;
+    }) });
+  }
+
+  removeItem = (ItemKey, key, e) => {
+    var index = 0;
+    while (this.state.todoLists[key].items[index].key !== ItemKey){
+      index++;
+    }
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        this.state.todoLists[key].items.splice(index, 1);
+      }
+      return todo;
+    }) });
   }
 
   render() {
@@ -61,6 +98,8 @@ class App extends Component {
         todoLists={this.state.todoLists} />;
       case AppScreen.LIST_SCREEN:            
         return <ListScreen
+          removeItem={this.removeItem}
+          moveItemUp={this.moveItemUp}
           moveItemDown={this.moveItemDown}
           ownerChange={this.ownerChange}
           nameChange={this.nameChange}

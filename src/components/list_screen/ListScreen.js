@@ -12,7 +12,11 @@ export class ListScreen extends Component {
                 <ListHeading goHome={this.props.goHome} />
                 <ListTrash />
                 <ListDetails ownerChange={this.props.ownerChange} nameChange={this.props.nameChange} todoList={this.props.todoList}/>
-                <ListItemsTable moveItemDown={this.props.moveItemDown} todoList={this.props.todoList} />
+                <ListItemsTable 
+                                removeItem={this.props.removeItem}
+                                moveItemUp={this.props.moveItemUp}
+                                moveItemDown={this.props.moveItemDown} 
+                                todoList={this.props.todoList} />
             </div>
         )
     }
