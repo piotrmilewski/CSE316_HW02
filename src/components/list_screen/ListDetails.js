@@ -20,7 +20,7 @@ export class ListDetails extends Component {
         return (
             <div id="list_details_container">
                 <div id="list_details_name_container" className="text_toolbar">
-                    <span id="list_name_prompt">Name:</span>
+                    <span id="list_name_prompt"><b>Name: </b></span>
                     <input 
                         defaultValue={this.getListName()} 
                         type="text" 
@@ -28,7 +28,7 @@ export class ListDetails extends Component {
                         onChange={this.props.nameChange.bind(this, this.props.todoList.key)} />
                 </div>
                 <div id="list_details_owner_container" className="text_toolbar">
-                    <span id="list_owner_prompt">Owner:</span>
+                    <span id="list_owner_prompt"><b>Owner: </b></span>
                     <input 
                         defaultValue={this.getListOwner()}
                         type="text" 

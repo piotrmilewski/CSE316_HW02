@@ -1,3 +1,5 @@
+@import "./fonts/Lexend Exa/css.css";
+
 :root {
   /* 
       FIRST WE'LL DEFINE OUR SWATCHES, i.e. THE COMPLEMENTARY
@@ -9,7 +11,7 @@
   --swatch-complement:    #E1E4CB; /* USED IN FORGROUND OF PRIMARY FOR TEXT AND BORDERS */
   --swatch_contrast:      #111111; /* USED IN MOUSE-OVER SELECTION OF LARGE ELEMENTS */
   --swatch-accent:        #669966; /* USED IN MOUSE-OVER SELECTION OF TEXT AND BORDERS */    
-  --my-font-family:          "Robaaaoto";
+  /*--my-font-family:          "Robaaaoto";*/
   --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
 }
 
@@ -175,18 +177,20 @@ body {
 
 /* ITEM SCREEN CLASSES */
 .item_prompt {
+  font-size: 14pt;
   font-weight: bold;
 }
 .item_input {
-font-size: 16pt;
+font-size: 14pt;
 }
 .item_button {
-font-size: 16pt;
+font-size: 14pt;
 }
 
 /* FOR A MODAL DIALOG */
 
 .modal { 
+  font-size: 16pt;
   position: fixed;
   top: 0;
   left: 0;
@@ -197,7 +201,7 @@ font-size: 16pt;
   justify-content: center;
   padding: 1rem;
   background: var(--black);
-  cursor: pointer;
+  cursor: default;
   visibility: hidden;
   opacity: 0;
   transition: all 0.35s ease-in;
@@ -208,6 +212,25 @@ font-size: 16pt;
   opacity: 1;
 }
 
+.is_slide {
+  animation-name: slide;
+  animation-duration: 1s;
+}
+.is_slide_out {
+  animation-name: slide_out;
+  animation-duration: 0.5s;
+}
+
+@keyframes slide_out {
+  from {left: 0%;}
+  to {left: 100%;}
+}
+
+@keyframes slide {
+  from {left: -60%;}
+  to {left: 0%;}
+}
+
 .modal_dialog {
   position: relative;
   max-width: 800px;
@@ -216,6 +239,9 @@ font-size: 16pt;
   background: var(--swatch-complement);
   overflow: auto;
   cursor: default;
+}
+.modal_button:hover {
+  box-shadow: 1px 2px;
 }
 
 /*CUSTOM VARIABLES HERE*/

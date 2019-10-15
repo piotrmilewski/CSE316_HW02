@@ -33,7 +33,7 @@ body {
   grid-row: 2 / span 1;
   display: flex;
 }
-#home_new_list_button, .item_button {
+#home_new_list_button {
   margin: auto;
   border-radius: 10px;
   cursor: pointer;
@@ -142,8 +142,38 @@ body {
 
 /* ITEM SCREEN CLASSES */
 .item_prompt {
-  grid-column: 1 / 4;
+  height: 50px;
 }
 .item_input {
-  grid-column: 2 / 4;
+  position: absolute;
+  left: 20%;
+  width: 70%;
+}
+.item_button {
+  height: 30px;
+  width: 80px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.item_checkbox {
+    position: absolute;
+    left: 20%;
+}
+.item_button_divider {
+  width: 6px;
+  height: auto;
+  display: inline-block;
+}
+
+/* MODAL CLASSES */
+.modal_button_divider {
+  width: 1px;
+  height: auto;
+  display: inline-block;
+}
+.modal_button {
+  height: 60px;
+  width: 60px;
+  cursor: pointer;
+  border-radius: 10px;
 }
