@@ -37,12 +37,14 @@ class App extends Component {
   }
 
   undo = (e) => {
-    this.tps.undoTransaction();
+    if (this.state.currentScreen === AppScreen.LIST_SCREEN)
+      this.tps.undoTransaction();
     e.stopImmediatePropagation();
   }
 
   redo = (e) => {
-    this.tps.doTransaction();
+    if (this.state.currentScreen === AppScreen.LIST_SCREEN)
+      this.tps.doTransaction();
     e.stopImmediatePropagation();
   }
 
@@ -101,17 +103,16 @@ class App extends Component {
   moveItemDownOp = (ItemKey, key) => {
     var index = 0;
     var tLIndex = 0;
-    //copy paste this accordingly and update todoLists[key] to todoLists[tLIndex]
-    /*while (this.state.todoLists[tLIndex].key !== key){
+    while (this.state.todoLists[tLIndex].key !== key){
       tLIndex++;
-    }*/
-    while (this.state.todoLists[key].items[index].key !== ItemKey){
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== ItemKey){
       index++;
     }
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items.splice(
-          index+1, 0, this.state.todoLists[key].items.splice(index, 1)[0]
+        todo.items.splice(
+          index+1, 0, todo.items.splice(index, 1)[0]
         );
       }
       return todo;
@@ -125,13 +126,17 @@ class App extends Component {
 
   moveItemUpOp = (ItemKey, key) => {
     var index = 0;
-    while (this.state.todoLists[key].items[index].key !== ItemKey){
+    var tLIndex = 0;
+    while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== ItemKey){
       index++;
     }
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items.splice(
-          index-1, 0, this.state.todoLists[key].items.splice(index, 1)[0]
+        todo.items.splice(
+          index-1, 0, todo.items.splice(index, 1)[0]
         );
       }
       return todo;
@@ -141,17 +146,21 @@ class App extends Component {
   removeItem = (ItemKey, key, e) => {
     e.stopPropagation();
     var index = 0;
-    while (this.state.todoLists[key].items[index].key !== ItemKey){
+    var tLIndex = 0;
+    while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== ItemKey){
       index++;
     }
-    var item = this.state.todoLists[key].items[index];
+    var item = this.state.todoLists[tLIndex].items[index];
     this.tps.addTransaction(new RemoveItemTransaction(key, index, this.removeItemOp, this.restoreItemOp, item));
   }
 
   removeItemOp = (key, index) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items.splice(index, 1);
+        todo.items.splice(index, 1);
       }
       return todo;
     }) });
@@ -160,7 +169,7 @@ class App extends Component {
   restoreItemOp = (key, index, item) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items.splice(index, 0, item);
+        todo.items.splice(index, 0, item);
       }
       return todo;
     }) });
@@ -275,12 +284,16 @@ class App extends Component {
 
   removeNewItemOp = (item, key) => {
     var index = 0;
-    while (this.state.todoLists[key].items[index].key !== item.key){
+    var tLIndex = 0;
+    while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== item.key){
       index++;
     }
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items.splice(index, 1);
+        todo.items.splice(index, 1);
       }
       return todo;
     }) });
@@ -288,7 +301,11 @@ class App extends Component {
 
   editItem = (key, itemKey) => {
     var index = 0;
-    while (this.state.todoLists[key].items[index].key !== itemKey){
+    var tLIndex = 0;
+    while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== itemKey){
       index++;
     }
     this.setState({currentItem: this.state.currentList.items[index]});
@@ -306,7 +323,11 @@ class App extends Component {
 
   submitEditItemOp = (key, item) => {
     var index = 0;
-    while (this.state.todoLists[key].items[index].key !== item.key){
+    var tLIndex = 0;
+    while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }
+    while (this.state.todoLists[tLIndex].items[index].key !== item.key){
       index++;
     }
     this.setState({todoLists: this.state.todoLists.map(todo => {
