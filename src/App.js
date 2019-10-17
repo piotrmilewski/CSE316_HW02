@@ -1,21 +1,42 @@
 import React, { Component } from 'react';
+import { HotKeys } from "react-hotkeys"
 import testTodoListData from './TestTodoListData.json'
 import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
 import ListScreen from './components/list_screen/ListScreen'
+import jsTPS from './jstps/jsTPS.js';
+import NameChangeTransaction from './jstps/NameChangeTransaction'
+import MoveItemTransaction from './jstps/MoveItemTransaction'
+import RemoveItemTransaction from './jstps/RemoveItemTransaction'
+import EditItemTransaction from './jstps/EditItemTransaction'
+import { SSL_OP_EPHEMERAL_RSA } from 'constants';
+import { withStatement } from '@babel/types';
+import { timeout } from 'q';
+
+const keyMap = {
+  undo: "ctrl+z",
+  redo: "ctrl+y"
+};
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
   LIST_SCREEN: "LIST_SCREEN",
   ITEM_SCREEN: "ITEM_SCREEN"
-}
+};
 
 class App extends Component {
+  
+  constructor(){
+    super();
+    this.tps = new jsTPS();
+  }
+
   state = {
     currentScreen: AppScreen.HOME_SCREEN,
     todoLists: testTodoListData.todoLists,
     currentList: null,
     currentItem: null,
+    oldItem: null,
     sortByTaskDecreasing: false,
     sortByDateDecreasing: false,
     sortByStatusDecreasing: false,
@@ -23,9 +44,20 @@ class App extends Component {
     trashDialog: false
   }
 
+  undo = () => {
+    this.tps.undoTransaction();
+    console.log(this.tps.toString());
+  }
+
+  redo = () => {
+    this.tps.doTransaction();
+    console.log(this.tps.toString());
+  }
+
   goHome = () => {
     this.setState({currentScreen: AppScreen.HOME_SCREEN});
     this.setState({currentList: null});
+    this.tps.clearAllTransactions();
   }
 
   goItem = () => {
@@ -44,24 +76,37 @@ class App extends Component {
   }
 
   nameChange = (key, e) => {
+    this.tps.addTransaction(new NameChangeTransaction(key, this.state.currentList.name, e.target.value, this.nameChangeOp));
+  }
+
+  nameChangeOp = (key, name) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        todo.name = e.target.value;
+        todo.name = name;
       }
       return todo;
     }) });
   }
 
   ownerChange = (key, e) => {
+    this.tps.addTransaction(new NameChangeTransaction(key, this.state.currentList.owner, e.target.value, this.ownerChangeOp));
+  }
+
+  ownerChangeOp = (key, name) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        todo.owner = e.target.value;
+        todo.owner = name;
       }
       return todo;
     }) });
   }
 
   moveItemDown = (ItemKey, key, e) => {
+    e.stopPropagation();
+    this.tps.addTransaction(new MoveItemTransaction(ItemKey, key, this.moveItemDownOp, this.moveItemUpOp));
+  }
+
+  moveItemDownOp = (ItemKey, key) => {
     var index = 0;
     while (this.state.todoLists[key].items[index].key !== ItemKey){
       index++;
@@ -74,10 +119,14 @@ class App extends Component {
       }
       return todo;
     }) });
-    e.stopPropagation();
   }
 
   moveItemUp = (ItemKey, key, e) => {
+    e.stopPropagation();
+    this.tps.addTransaction(new MoveItemTransaction(ItemKey, key, this.moveItemUpOp, this.moveItemDownOp));
+  }
+
+  moveItemUpOp = (ItemKey, key) => {
     var index = 0;
     while (this.state.todoLists[key].items[index].key !== ItemKey){
       index++;
@@ -90,21 +139,34 @@ class App extends Component {
       }
       return todo;
     }) });
-    e.stopPropagation();
   }
 
   removeItem = (ItemKey, key, e) => {
+    e.stopPropagation();
     var index = 0;
     while (this.state.todoLists[key].items[index].key !== ItemKey){
       index++;
     }
+    var item = this.state.todoLists[key].items[index];
+    this.tps.addTransaction(new RemoveItemTransaction(key, index, this.removeItemOp, this.restoreItemOp, item));
+  }
+
+  removeItemOp = (key, index) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
         this.state.todoLists[key].items.splice(index, 1);
       }
       return todo;
     }) });
-    e.stopPropagation();
+  }
+
+  restoreItemOp = (key, index, item) => {
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        this.state.todoLists[key].items.splice(index, 0, item);
+      }
+      return todo;
+    }) });
   }
 
   sortTasks = (key, e) => {
@@ -216,11 +278,19 @@ class App extends Component {
       index++;
     }
     this.setState({currentItem: this.state.currentList.items[index]});
+    var placeH = this.state.currentList.items[index];
+    placeH = JSON.parse(JSON.stringify(placeH));
+    this.setState({oldItem: placeH});
     this.setState({newItem: false});
     this.goItem();
   }
 
   submitEditItem = (item, key) => {
+    var oldItem = this.state.oldItem;
+    this.tps.addTransaction(new EditItemTransaction(key, item, this.submitEditItemOp, oldItem));
+  }
+
+  submitEditItemOp = (key, item) => {
     var index = 0;
     while (this.state.todoLists[key].items[index].key !== item.key){
       index++;
@@ -270,14 +340,18 @@ class App extends Component {
   }
 
   render() {
+    const handlers = {
+      undo: this.undo,
+      redo: this.redo
+    }
     switch(this.state.currentScreen) {
       case AppScreen.HOME_SCREEN:
-        return <HomeScreen
+        return (<HomeScreen
         loadList={this.loadList.bind(this)} 
         todoLists={this.state.todoLists} 
-        newTodolist={this.newTodolist}/>;
+        newTodolist={this.newTodolist}/>);
       case AppScreen.LIST_SCREEN:            
-        return <ListScreen
+        return <HotKeys keyMap={keyMap} handlers={handlers}><ListScreen
           deleteTodo={this.deleteTodo}
           dontDeleteTodo={this.dontDeleteTodo}
           confirmDialogTrash={this.confirmDialogTrash}
@@ -293,7 +367,7 @@ class App extends Component {
           ownerChange={this.ownerChange}
           nameChange={this.nameChange}
           goHome={this.goHome.bind(this)}
-          todoList={this.state.currentList}/>;
+          todoList={this.state.currentList}/></HotKeys>;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen 
           newItem={this.state.newItem}

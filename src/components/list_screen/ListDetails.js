@@ -22,7 +22,7 @@ export class ListDetails extends Component {
                 <div id="list_details_name_container" className="text_toolbar">
                     <span id="list_name_prompt"><b>Name: </b></span>
                     <input 
-                        defaultValue={this.getListName()} 
+                        value={this.getListName()} 
                         type="text" 
                         id="list_name_textfield"
                         onChange={this.props.nameChange.bind(this, this.props.todoList.key)} />
@@ -30,7 +30,7 @@ export class ListDetails extends Component {
                 <div id="list_details_owner_container" className="text_toolbar">
                     <span id="list_owner_prompt"><b>Owner: </b></span>
                     <input 
-                        defaultValue={this.getListOwner()}
+                        value={this.getListOwner()}
                         type="text" 
                         id="list_owner_textfield"
                         onChange={this.props.ownerChange.bind(this, this.props.todoList.key)} />
