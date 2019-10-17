@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HotKeys } from "react-hotkeys"
+//import { HotKeys } from "react-hotkeys"
 import testTodoListData from './TestTodoListData.json'
 import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
@@ -9,14 +9,11 @@ import NameChangeTransaction from './jstps/NameChangeTransaction'
 import MoveItemTransaction from './jstps/MoveItemTransaction'
 import RemoveItemTransaction from './jstps/RemoveItemTransaction'
 import EditItemTransaction from './jstps/EditItemTransaction'
-import { SSL_OP_EPHEMERAL_RSA } from 'constants';
-import { withStatement } from '@babel/types';
-import { timeout } from 'q';
 
-const keyMap = {
+/*const keyMap = {
   undo: "ctrl+z",
   redo: "ctrl+y"
-};
+};*/
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
@@ -44,14 +41,14 @@ class App extends Component {
     trashDialog: false
   }
 
-  undo = () => {
+  undo = (e) => {
     this.tps.undoTransaction();
-    console.log(this.tps.toString());
+    e.stopImmediatePropagation();
   }
 
-  redo = () => {
+  redo = (e) => {
     this.tps.doTransaction();
-    console.log(this.tps.toString());
+    e.stopImmediatePropagation();
   }
 
   goHome = () => {
@@ -297,7 +294,7 @@ class App extends Component {
     }
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
-        this.state.todoLists[key].items[index] = item;
+        todo.items[index] = item;
       }
       return todo;
     }) });
@@ -339,11 +336,16 @@ class App extends Component {
     this.setState({trashDialog: false});
   }
 
+  checkKeys = (e) => {
+    console.log("fuck");
+    console.log(e.target.value);
+  }
+
   render() {
-    const handlers = {
+    /*const handlers = {
       undo: this.undo,
       redo: this.redo
-    }
+    }*/
     switch(this.state.currentScreen) {
       case AppScreen.HOME_SCREEN:
         return (<HomeScreen
@@ -351,7 +353,9 @@ class App extends Component {
         todoLists={this.state.todoLists} 
         newTodolist={this.newTodolist}/>);
       case AppScreen.LIST_SCREEN:            
-        return <HotKeys keyMap={keyMap} handlers={handlers}><ListScreen
+        return <ListScreen
+          undo={this.undo}
+          redo={this.redo}
           deleteTodo={this.deleteTodo}
           dontDeleteTodo={this.dontDeleteTodo}
           confirmDialogTrash={this.confirmDialogTrash}
@@ -367,7 +371,7 @@ class App extends Component {
           ownerChange={this.ownerChange}
           nameChange={this.nameChange}
           goHome={this.goHome.bind(this)}
-          todoList={this.state.currentList}/></HotKeys>;
+          todoList={this.state.currentList}/>;
       case AppScreen.ITEM_SCREEN:
         return <ItemScreen 
           newItem={this.state.newItem}

@@ -5,9 +5,23 @@ import ListTrash from './ListTrash'
 import ListDetails from './ListDetails'
 import ListNewItem from './ListNewItem'
 import ListModal from './ListModal'
-import PropTypes from 'prop-types';
 
 export class ListScreen extends Component {
+    componentDidMount() {
+        document.addEventListener("keydown", this.onKeyPressed.bind(this));
+    }
+  
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.onKeyPressed.bind(this));
+    }
+
+    onKeyPressed = (e) => {
+        if (e.key === 'z' && e.ctrlKey)
+            this.props.undo(e);
+        else if (e.key === 'y' && e.ctrlKey)
+            this.props.redo(e);
+    }
+
     render() {
         return (
             <div id="todo_list">

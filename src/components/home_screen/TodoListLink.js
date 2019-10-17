@@ -4,13 +4,12 @@ import PropTypes from 'prop-types';
 export class TodoListLink extends Component {
     render() {  
         return (
-            <a 
+            <div 
                 className='home_list_link'
-                href='#'
                 onClick={this.props.loadList.bind(this, this.props.todoList)}
             >
                 {this.props.todoList.name}<br></br><br></br>
-            </a>
+            </div>
         )
     }
 }

@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 export class ListDetails extends Component {
     getListName() {
         if (this.props.todoList) {
-            let name = this.props.todoList.name;
             return this.props.todoList.name;
         }
         else
@@ -11,7 +10,6 @@ export class ListDetails extends Component {
     }
     getListOwner() {
         if (this.props.todoList) {
-            let owner = this.props.todoList.owner;
             return this.props.todoList.owner;
         }
     }

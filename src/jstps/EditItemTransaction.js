@@ -14,7 +14,6 @@ class RemoveItemTransaction extends jsTPS_Transaction {
     }
 
     undoTransaction() {
-        console.log(this.item);
         this.callback(this.key, this.oldItem);
     }
 }
