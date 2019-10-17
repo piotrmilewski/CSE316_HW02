@@ -63,8 +63,8 @@ class App extends Component {
   loadList = (todoListToLoad) => {
     this.setState({currentScreen: AppScreen.LIST_SCREEN});
     this.setState({currentList: todoListToLoad});
-    console.log("currentList: " + this.state.currentList);
-    console.log("currentScreen: " + this.state.currentScreen);
+    //console.log("currentList: " + this.state.currentList);
+    //console.log("currentScreen: " + this.state.currentScreen);
   }
 
   nameChange = (key, e) => {
@@ -100,6 +100,11 @@ class App extends Component {
 
   moveItemDownOp = (ItemKey, key) => {
     var index = 0;
+    var tLIndex = 0;
+    //copy paste this accordingly and update todoLists[key] to todoLists[tLIndex]
+    /*while (this.state.todoLists[tLIndex].key !== key){
+      tLIndex++;
+    }*/
     while (this.state.todoLists[key].items[index].key !== ItemKey){
       index++;
     }
