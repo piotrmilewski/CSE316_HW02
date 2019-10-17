@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-//import { HotKeys } from "react-hotkeys"
 import testTodoListData from './TestTodoListData.json'
 import HomeScreen from './components/home_screen/HomeScreen'
 import ItemScreen from './components/item_screen/ItemScreen'
@@ -9,11 +8,7 @@ import NameChangeTransaction from './jstps/NameChangeTransaction'
 import MoveItemTransaction from './jstps/MoveItemTransaction'
 import RemoveItemTransaction from './jstps/RemoveItemTransaction'
 import EditItemTransaction from './jstps/EditItemTransaction'
-
-/*const keyMap = {
-  undo: "ctrl+z",
-  redo: "ctrl+y"
-};*/
+import NewItemTransaction from './jstps/NewItemTransaction'
 
 const AppScreen = {
   HOME_SCREEN: "HOME_SCREEN",
@@ -260,6 +255,10 @@ class App extends Component {
   }
 
   submitNewItem = (item, key) => {
+    this.tps.addTransaction(new NewItemTransaction(key, item, this.submitNewItemOp, this.removeNewItemOp));
+  }
+
+  submitNewItemOp = (item, key) => {
     this.setState({todoLists: this.state.todoLists.map(todo => {
       if (todo.key === key) {
         todo.items.push(item);
@@ -267,6 +266,19 @@ class App extends Component {
       return todo;
     }) });
     this.goList();
+  }
+
+  removeNewItemOp = (item, key) => {
+    var index = 0;
+    while (this.state.todoLists[key].items[index].key !== item.key){
+      index++;
+    }
+    this.setState({todoLists: this.state.todoLists.map(todo => {
+      if (todo.key === key) {
+        this.state.todoLists[key].items.splice(index, 1);
+      }
+      return todo;
+    }) });
   }
 
   editItem = (key, itemKey) => {
